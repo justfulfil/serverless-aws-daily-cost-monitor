@@ -1,0 +1,20 @@
+service: aws-cost-monitor
+
+provider:
+  name: aws
+  runtime: nodejs10.x
+  stage: dev
+  region: us-east-1 # cost explorer api is only available in us-east-1
+  timeout: 60
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - ce:GetCostAndUsage
+        - ce:GetCostAndUsageWithResources
+      Resource: "*"
+
+functions:
+  monitorAWSCosts:
+    handler: handler.monitorAWSCosts
+    events:
+      - schedule: cron(0 10 * * ? *) # at 10am every day
